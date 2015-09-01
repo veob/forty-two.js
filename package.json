@@ -1,0 +1,33 @@
+{
+  "name": "forty-two.js",
+  "version": "0.0.1",
+  "description": "Wordify number",
+  "main": "dist/forty-two.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha ./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/veob/forty-two.js.git"
+  },
+  "keywords": [
+    "number",
+    "words",
+    "wordify",
+    "spell",
+    "numbers"
+  ],
+  "author": "veob",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/veob/forty-two.js/issues"
+  },
+  "homepage": "https://github.com/veob/forty-two.js#readme",
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^2.3.0"
+  }
+}
