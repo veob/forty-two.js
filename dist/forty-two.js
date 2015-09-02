@@ -7,6 +7,7 @@
 
 		this.locales = {};
 		this.locales.ru = {
+			'0': '',
 			'1': 'один',
 			'2': 'два',
 			'3': 'три',
@@ -46,25 +47,68 @@
 			'1000': 'тысяча',
 			'1000000': 'миллион'
 		};
+
+		this.parse = function(number, rank) {
+			console.log('number', number);
+			var result = [];
+			if (number.toString().length === 3) {
+				var hundred = (~~(number / 100) * 100);
+				console.log('parse hundreds', number, '->', hundred);
+				//parse hundreds
+				result.push(this.locales.ru[hundred]);
+				number = number % 100;
+			}
+
+			if (number >= 20) {
+				console.log('parse >= 20');
+				var dozen = (~~(number / 10) * 10);
+				result.push(this.locales.ru[dozen]);
+				number = number.toString()[1];
+			}
+
+			result.push(this.locales.ru[number]);
+
+			if (rank === 1) {
+				console.log('thousands');
+				result.push(this.locales.ru[1000]);
+			}
+
+			return result;
+		};
 	}
 
+
+
 	FortyTwo.prototype.wordify = function(number, locale) {
+		number = number.toString();
+
 		locale = locale || 'ru';
 		var parts = [];
+		var resultParts = [];
 
-		var lastPart = this.locales[locale][(number % 100)];
-		parts.push(lastPart);
+		parts = number.toString().match(/.{1,3}/g);
 
-		return parts.join(' ');
+		for (var i = 1; i < number.length; i += 3) {
+			var start = number.length - i;
+			start = start >= 0 ? start : 0;
+
+			parts.push(number.slice(start, start + 3));
+		}
+		console.log('parts', parts);
+		var rank = parts.length;
+		console.log(parts, rank);
+
+		for (var i = 0; i < parts.length; i++) {
+			var temp = parts[i];
+			resultParts = resultParts.concat(this.parse(temp, rank));
+			rank--;
+		}
+
+		resultParts = resultParts.filter(Boolean);
+		var result = resultParts.join(' ');
+
+		return result;
 	};
-
-
-
-
-
-
-
-
 
 	if (typeof exports !== 'undefined' ) {
 		if (typeof module !== 'undefined' && module.exports ) {
