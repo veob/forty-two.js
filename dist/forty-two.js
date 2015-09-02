@@ -8,8 +8,8 @@
 		this.locales = {};
 		this.locales.ru = {
 			'0': '',
-			'1': 'один',
-			'2': 'два',
+			'1': {feminine: 'одна', masculine: 'один'},
+			'2': {feminine: 'две', masculine: 'два'},
 			'3': 'три',
 			'4': 'четыре',
 			'5': 'пять',
@@ -44,40 +44,44 @@
 			'700': 'семьсот',
 			'800': 'восемьсот',
 			'900': 'девятьсот',
-			'1000': 'тысяча',
-			'1000000': 'миллион'
+			'1000': {pluralForms: ['тысяча', 'тысячи', 'тысяч']},
+			'1000000': {pluralForms: ['миллион', 'миллиона', 'миллионов']},
+			'1000000000': {pluralForms: ['миллиард', 'миллиарда', 'миллиардов']}
 		};
 
 		this.parse = function(number, rank) {
-			console.log('number', number);
 			var result = [];
 			if (number.toString().length === 3) {
 				var hundred = (~~(number / 100) * 100);
-				console.log('parse hundreds', number, '->', hundred);
 				//parse hundreds
 				result.push(this.locales.ru[hundred]);
 				number = number % 100;
 			}
 
 			if (number >= 20) {
-				console.log('parse >= 20');
 				var dozen = (~~(number / 10) * 10);
 				result.push(this.locales.ru[dozen]);
 				number = number.toString()[1];
 			}
 
-			result.push(this.locales.ru[number]);
+			var gender = 'masculine';
+			if (rank === 2) {
+				gender = 'feminine';
+			}
 
-			if (rank === 1) {
-				console.log('thousands');
-				result.push(this.locales.ru[1000]);
+			result.push(this.locales.ru[number][gender] || this.locales.ru[number]);
+
+			if (rank === 2) {
+				result.push(this.plural(number, this.locales.ru[1000].pluralForms));
+			}
+
+			if (rank === 3) {
+				result.push(this.plural(number, this.locales.ru[1000000].pluralForms));
 			}
 
 			return result;
 		};
 	}
-
-
 
 	FortyTwo.prototype.wordify = function(number, locale) {
 		number = number.toString();
@@ -86,21 +90,25 @@
 		var parts = [];
 		var resultParts = [];
 
-		parts = number.toString().match(/.{1,3}/g);
-
-		for (var i = 1; i < number.length; i += 3) {
-			var start = number.length - i;
+		var partsLength = Math.ceil(number.length / 3);
+		for (var i = 1; i <= partsLength; i ++) {
+			var start = number.length - (i * 3);
+			var end = start + 3;
 			start = start >= 0 ? start : 0;
 
-			parts.push(number.slice(start, start + 3));
+			parts.push(number.slice(start, end));
 		}
-		console.log('parts', parts);
-		var rank = parts.length;
-		console.log(parts, rank);
 
-		for (var i = 0; i < parts.length; i++) {
+		console.log('parts', parts);
+
+		var rank = parts.length;
+
+		for (i = partsLength - 1; i >= 0; i--) {
 			var temp = parts[i];
-			resultParts = resultParts.concat(this.parse(temp, rank));
+
+			if (parseInt(temp, 10)) {
+				resultParts = resultParts.concat(this.parse(temp, rank));
+			}
 			rank--;
 		}
 
@@ -108,6 +116,20 @@
 		var result = resultParts.join(' ');
 
 		return result;
+	};
+
+	FortyTwo.prototype.plural = function(number, wordForms) {
+		number = parseInt(number, 10);
+
+		if (number === 1) {
+			return wordForms[0];
+		}
+
+		if (number >= 2 && number <= 4) {
+			return wordForms[1];
+		}
+
+		return wordForms[2];
 	};
 
 	if (typeof exports !== 'undefined' ) {
