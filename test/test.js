@@ -10,6 +10,12 @@ describe('forty-five', function() {
 
 	it('return something', function () {
 
+		expect(fortyTwo.wordify('333'))
+					.to.be('триста тридцать три');
+
+		expect(fortyTwo.wordify(7000000000))
+					.to.be('семь миллиардов');
+
 		expect(fortyTwo.wordify(100000001))
 					.to.be('сто миллионов один');
 
@@ -17,10 +23,11 @@ describe('forty-five', function() {
 					.to.be('три миллиона');
 
 		expect(fortyTwo.wordify(1234560))
-					.to.be('один миллион двести тридцать четыре тысячи пятьсот шестьдесят');
+					.to.be('один миллион двести тридцать четыре' +
+										' тысячи пятьсот шестьдесят');
 
-		expect(fortyTwo.wordify(123456))
-					.to.be('сто двадцать три тысячи четыреста пятьдесят шесть');
+		expect(fortyTwo.wordify(123450))
+					.to.be('сто двадцать три тысячи четыреста пятьдесят');
 
 		expect(fortyTwo.wordify(125456))
 					.to.be('сто двадцать пять тысяч четыреста пятьдесят шесть');

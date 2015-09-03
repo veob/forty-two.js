@@ -3,7 +3,8 @@
 
 (function() {
 	function FortyTwo(params) {
-		this.params = params || {};
+		params = params || {};
+		this.defaultLocale = params.defaultLocale || 'ru';
 
 		this.locales = {};
 		this.locales.ru = {
@@ -31,14 +32,6 @@
 				'', '', 'двадцать', 'тридцать', 'сорок', 'пятьдесят',
 				'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто'
 			],
-			'20': 'двадцать',
-			'30': 'тридцать',
-			'40': 'сорок',
-			'50': 'пятьдесят',
-			'60': 'шестьдесят',
-			'70': 'семьдесят',
-			'80': 'восемьдесят',
-			'90': 'девяносто',
 			'hundreds': [
 				'', 'сто', 'двести', 'триста', 'четыреста', 'пятьсот',
 				'шестьсот', 'семьсот', 'восемьсот', 'девятьсот'
@@ -46,46 +39,14 @@
 			'tenInPower': {
 				'3': {pluralForms: ['тысяча', 'тысячи', 'тысяч']},
 				'6': {pluralForms: ['миллион', 'миллиона', 'миллионов']},
-				'9': {pluralForms: ['миллиард', 'миллиарда', 'миллиардов']}
+				'9': {pluralForms: ['миллиард', 'миллиарда', 'миллиардов']},
+				'12': {pluralForms: ['триллион', 'триллиона', 'триллионов']}
 			}
-		};
-
-		this._parse = function(memo, number, rank) {
-			var result = [];
-			if (number.toString().length === 3) {
-				var hundred = (~~(number / 100) * 100);
-
-				//parse hundreds
-				result.push(this.locales.ru[hundred]);
-				number = number % 100;
-			}
-
-			if (number >= 20) {
-				var ten = (~~(number / 10) * 10);
-				result.push(this.locales.ru[ten]);
-				number = number.toString()[1];
-			}
-
-			var gender = 'masculine';
-			if (rank === 2) {
-				gender = 'feminine';
-			}
-
-			result.push(this.locales.ru[number][gender] || this.locales.ru[number]);
-
-			if (rank === 2) {
-				result.push(this.plural(number, this.locales.ru[1000].pluralForms || this.locales.ru[1000]));
-			}
-
-			if (rank === 3) {
-				result.push(this.plural(number, this.locales.ru[1000000].pluralForms || this.locales.ru[1000]));
-			}
-
-			return result;
 		};
 
 		this.parse = function(memo, currentNumber, currentRank, locale) {
 			var numberString = currentNumber.toString();
+
 			if (numberString.length === 3) {
 				//parse hundreds
 				memo.push(locale.hundreds[numberString[0]]);
@@ -93,57 +54,68 @@
 				numberString = numberString.slice(1, 3);
 			}
 
-			if (currentNumber >= 20) {
-				memo.push(this.locales.ru[ten]);
-				currentNumber = currentNumber.toString()[1];
+			if (numberString >= 20) {
+				//parse tens
+				memo.push(locale.tens[numberString[0]]);
+				numberString = numberString[1];
 			}
 
-			var gender = 'masculine';
-			if (currentRank === 2) {
-				gender = 'feminine';
+			numberString = parseInt(numberString, 10);
+			if (numberString) {
+				//parse ones
+				var gender = currentRank === 3 ? 'feminine' : 'masculine';
+				memo.push(locale[numberString][gender] || locale[numberString]);
 			}
 
-			memo.push(locale[currentNumber][gender] || locale[currentNumber]);
-
-			if (currentRank === 2) {
-				memo.push(this.plural(currentNumber, locale[1000].pluralForms || locale[1000]));
+			if (currentRank >= 3) {
+				///parse ten in power >= 3 (thousands, millons, etc.)
+				memo.push(
+					this.plural(
+						numberString,
+						locale
+							.tenInPower[currentRank].pluralForms ||
+										locale.tenInPower[currentRank]
+					)
+				);
 			}
-
-			if (currentRank === 3) {
-				memo.push(this.plural(currentNumber, locale[1000000].pluralForms || locale[1000]));
-			}
-
 		};
 	}
+
 	FortyTwo.prototype.wordify = function(number, locale) {
-		number = number.toString();
+		var chunks = [];
+		var resultChunks = [];
 
-		locale = locale || 'ru';
-		var parts = [];
-		var resultParts = [];
+		locale = this.locales[locale || this.defaultLocale];
 
-		var partsLength = Math.ceil(number.length / 3);
-		for (var i = 1; i <= partsLength; i ++) {
-			var start = number.length - (i * 3);
+
+		var parsedNumber = parseInt(number, 10);
+		if (number !== parsedNumber) {
+			console.warn('FortyTwo.wordify: got float number, ' +
+						' will parse only integer part'
+			);
+		}
+
+		parsedNumber = parsedNumber.toString();
+
+		//Split number in chunks by three
+		var partsLength = Math.ceil(parsedNumber.length / 3);
+		for (var i = 1; i <= partsLength; i++) {
+			var start = parsedNumber.length - (i * 3);
 			var end = start + 3;
 			start = start >= 0 ? start : 0;
 
-			parts.push(number.slice(start, end));
+			chunks.push(parsedNumber.slice(start, end));
 		}
 
-		var rank = parts.length;
-
-		for (i = partsLength - 1; i >= 0; i--) {
-			var temp = parts[i];
-
-			if (parseInt(temp, 10)) {
-				resultParts = resultParts.concat(this._parse(temp, rank));
+		//Parse chunks in reverse order
+		for (var rank = partsLength - 1; rank >= 0; rank--) {
+			var tempChunk = parseInt(chunks[rank], 10);
+			if (tempChunk) {
+				this.parse(resultChunks, tempChunk, rank * 3, locale);
 			}
-			rank--;
 		}
 
-		resultParts = filter(resultParts);
-		var result = resultParts.join(' ');
+		var result = resultChunks.join(' ');
 
 		return result;
 	};
@@ -161,16 +133,6 @@
 
 		return wordForms[2];
 	};
-
-	function filter(array) {
-		var result = [];
-		for (var i = 0; i < array.length; i++) {
-			if (array[i]) {
-				result.push(array[i]);
-			}
-		}
-		return result;
-	}
 
 	if (typeof exports !== 'undefined' ) {
 		if (typeof module !== 'undefined' && module.exports ) {
