@@ -8,8 +8,7 @@ var fortyTwo = new FortyTwo();
 
 describe('forty-five', function() {
 
-	it('return something', function () {
-
+	it('tests good numbers', function() {
 		expect(fortyTwo.wordify('333'))
 					.to.be('триста тридцать три');
 
@@ -41,6 +40,17 @@ describe('forty-five', function() {
 		expect(fortyTwo.wordify(32)).to.be('тридцать два');
 		expect(fortyTwo.wordify(11)).to.be('одиннадцать');
 		expect(fortyTwo.wordify(2)).to.be('два');
+	});
+
+	it('tests bad numbers', function () {
+		expect(fortyTwo.wordify('foo')).to.not.be.ok();
+		expect(fortyTwo.wordify('123qssad')).to.not.be.ok();
+		expect(fortyTwo.wordify('123,123')).to.not.be.ok();
+		expect(fortyTwo.wordify('0.132')).to.not.be.ok();
+	});
+
+	it('tests float numbers', function() {
+		expect(fortyTwo.wordify(123.456)).to.be('сто двадцать три');
 	});
 });
 

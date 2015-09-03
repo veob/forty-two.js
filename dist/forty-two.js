@@ -87,12 +87,19 @@
 
 		locale = this.locales[locale || this.defaultLocale];
 
+		if (!isNumeric(number)) {
+			console.error('FortyTwo.wordify: got not a number');
+			return '';
+		}
+
 
 		var parsedNumber = parseInt(number, 10);
 		if (number !== parsedNumber) {
-			console.warn('FortyTwo.wordify: got float number, ' +
-						' will parse only integer part'
-			);
+			if (typeof number !== 'string') {
+				console.warn('FortyTwo.wordify: got float number, ' +
+							' will parse only integer part'
+				);
+			}
 		}
 
 		parsedNumber = parsedNumber.toString();
@@ -133,6 +140,10 @@
 
 		return wordForms[2];
 	};
+
+	function isNumeric(n) {
+		return !isNaN(parseFloat(n)) && isFinite(n);
+	}
 
 	if (typeof exports !== 'undefined' ) {
 		if (typeof module !== 'undefined' && module.exports ) {
