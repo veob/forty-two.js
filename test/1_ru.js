@@ -43,10 +43,10 @@ describe('forty-five', function() {
 	});
 
 	it('tests bad numbers', function () {
-		expect(fortyTwo.wordify('foo')).to.not.be.ok();
-		expect(fortyTwo.wordify('123qssad')).to.not.be.ok();
-		expect(fortyTwo.wordify('123,123')).to.not.be.ok();
-		expect(fortyTwo.wordify('0.132')).to.not.be.ok();
+		expect(fortyTwo.wordify).withArgs('foo').to.throwException();
+		expect(fortyTwo.wordify).withArgs('123qssad').to.throwException();
+		expect(fortyTwo.wordify).withArgs('123,123').to.throwException();
+		expect(fortyTwo.wordify).withArgs('0.132').to.throwException();
 	});
 
 	it('tests float numbers', function() {

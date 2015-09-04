@@ -88,8 +88,7 @@
 		locale = this.locales[locale || this.defaultLocale];
 
 		if (!isNumeric(number)) {
-			console.error('FortyTwo.wordify: got not a number');
-			return '';
+			throw new Error('`number` is not a number');
 		}
 
 
