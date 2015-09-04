@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Mocha</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="../../node_modules/mocha/mocha.css" />
+	</head>
+	<body>
+		<div id="mocha"></div>
+		<script src="../../node_modules/mocha/mocha.js"></script>
+		<script src="../../node_modules/expect.js/index.js"></script>
+		<script src="../../dist/forty-two.js"></script>
+		<script src="../../locales/ru.js"></script>
+		<script>mocha.setup('bdd');</script>
+		<script>
+				describe('test forty-two', function() {
+					it('tests some numbers', function() {
+						expect(fortyTwo.wordify(123, 'ru')).to.be.eql('сто двадцать три');
+					})
+				})
+		</script>
+		<script>
+			mocha.run();
+		</script>
+	</body>
+</html>
