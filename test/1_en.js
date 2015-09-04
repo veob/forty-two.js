@@ -3,15 +3,8 @@
 
 var expect = require('expect.js');
 var fortyTwo = require('../dist/forty-two');
-var enLocale = require('../locales/en');
-
 
 describe('English locale', function() {
-	before(function() {
-		fortyTwo.addLocale('en', enLocale);
-		fortyTwo.setDefaultLocale('en');
-	});
-
 	it('tests good numbers', function() {
 		expect(fortyTwo.wordify('333'))
 			.to.be('three hundred thirty-three');

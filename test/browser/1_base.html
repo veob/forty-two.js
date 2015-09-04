@@ -14,11 +14,12 @@
 		<script src="../../locales/ru.js"></script>
 		<script>mocha.setup('bdd');</script>
 		<script>
-				describe('test forty-two', function() {
-					it('tests some numbers', function() {
-						expect(fortyTwo.wordify(123, 'ru')).to.be.eql('сто двадцать три');
-					})
-				})
+			describe('test forty-two', function() {
+				it('tests some numbers', function() {
+					expect(fortyTwo.wordify(2)).to.be.eql('two');
+					expect(fortyTwo.wordify(123, 'ru')).to.be.eql('сто двадцать три');
+				});
+			});
 		</script>
 		<script>
 			mocha.run();

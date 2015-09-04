@@ -113,6 +113,83 @@
 		return !isNaN(parseFloat(n)) && isFinite(n);
 	}
 
+	var enLocale = (function() {
+		var locale = {
+			'0': '',
+			'1': 'one',
+			'2': 'two',
+			'3': 'three',
+			'4': 'four',
+			'5': 'five',
+			'6': 'six',
+			'7': 'seven',
+			'8': 'eight',
+			'9': 'nine',
+			'10': 'ten',
+			'11': 'eleven',
+			'12': 'twelve',
+			'13': 'thirteen',
+			'14': 'fourteen',
+			'15': 'fifteen',
+			'16': 'sixteen',
+			'17': 'seventeen',
+			'18': 'eighteen',
+			'19': 'nineteen',
+			'tens': [
+				'', '', 'twenty', 'thirty', 'forty', 'fifty',
+				'sixty', 'seventy', 'eighty', 'ninety'
+			],
+			'powerOfTen': {
+				'3': 'thousand',
+				'6': 'million',
+				'9': 'billion',
+				'12': 'trillion'
+			},
+			parseOnesAndTeens: parseOnesAndTeens,
+			parseTens: parseTens,
+			parseHundreds: parseHundreds,
+			parsePowerOfTen: parsePowerOfTen
+		};
+		var DELIMITER = ' ';
+
+		function parseOnesAndTeens(resultParts, numberString, powerOfTen) {
+			resultParts.push(locale[numberString] + DELIMITER);
+
+			return numberString;
+		}
+		function parseTens(resultParts, numberString, powerOfTen) {
+			var value = locale.tens[numberString[0]];
+
+			value = value + (
+				numberString[1] !== '0'
+					? '-'
+					: DELIMITER
+			);
+
+			resultParts.push(value);
+
+			return numberString[1];
+		}
+		function parseHundreds(resultParts, numberString, powerOfTen) {
+			var value = locale[numberString[0]] + ' hundred ';
+
+			resultParts.push(value);
+
+			return numberString.slice(1, 3);
+		}
+		function parsePowerOfTen(resultParts, numberString, powerOfTen) {
+			resultParts.push(
+				locale.powerOfTen[powerOfTen] + DELIMITER
+			);
+		}
+
+		return locale;
+	})();
+
+
+	fortyTwo.addLocale('en', enLocale);
+	fortyTwo.setDefaultLocale('en');
+
 	if (typeof exports !== 'undefined' ) {
 		if (typeof module !== 'undefined' && module.exports ) {
 			exports = module.exports = fortyTwo;
