@@ -25,7 +25,7 @@
 		"camelcase": [2, {properties: "never"}],
 		"dot-notation": [2, {"allowKeywords": false}],
 		"eqeqeq": 2,
-		"no-unused-vars": 1,
+		"no-unused-vars": [1, {"vars": "all", "args": "none"}],
 		"comma-spacing": [1, {"after": true}],
 		"no-mixed-spaces-and-tabs": 1,
 		"no-console": 0

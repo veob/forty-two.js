@@ -3,8 +3,15 @@
 
 var expect = require('expect.js');
 var fortyTwo = require('../dist/forty-two');
+var ruLocale = require('../locales/ru');
+
 
 describe('forty-five', function() {
+
+	before(function() {
+		fortyTwo.addLocale('ru', ruLocale);
+		fortyTwo.setDefaultLocale('ru');
+	});
 
 	it('tests good numbers', function() {
 		expect(fortyTwo.wordify('333'))
@@ -48,50 +55,6 @@ describe('forty-five', function() {
 
 	it('tests float numbers', function() {
 		expect(fortyTwo.wordify(123.456)).to.be('сто двадцать три');
-	});
-
-	it('tests adding locale', function() {
-		fortyTwo.addLocale('en', {
-			'0': '',
-			'1': 'one',
-			'2': 'two',
-			'3': 'three',
-			'4': 'four',
-			'5': 'five',
-			'6': 'six',
-			'7': 'seven',
-			'8': 'eight',
-			'9': 'nine',
-			'10': 'ten',
-			'11': 'eleven',
-			'12': 'twelve',
-			'13': 'thirteen',
-			'14': 'fourteen',
-			'15': 'fifteen',
-			'16': 'sixteen',
-			'17': 'seventeen',
-			'18': 'eighteen',
-			'19': 'nineteen',
-			'tens': [
-				'', '', 'twenty', 'thirdy', 'fourty', 'fifty',
-				'sixty', 'seventy', 'eighty', 'ninety'
-			],
-			'hundreds': [
-				'', 'one hundred', 'two hundred', 'three hundred',
-				'four hundred', 'five hundred', 'six hundred', 'seven hundred',
-				'eight hundred', 'nine hundred'
-			],
-			'tenInPower': {
-				'3': {pluralForms: ['thousand', 'thousands', 'thousands']},
-				'6': {pluralForms: ['million', 'millions', 'millions']},
-				'9': {pluralForms: ['billion', 'billions', 'billions']},
-				'12': {pluralForms: ['trillion', 'trillions', 'trillions']}
-			}
-		});
-
-		expect(fortyTwo.wordify(2, 'en')).to.be('two');
-		expect(fortyTwo.wordify(123, 'en')).to.be('one hundred twenty three');
-		expect(fortyTwo.wordify(11009, 'en')).to.be('eleven thousands nine');
 	});
 });
 
