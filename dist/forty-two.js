@@ -5,51 +5,10 @@
 	var root = this;
 
 	//internal fortyTwo object
-	var _ft = {
-		locales: {
-			ru: {
-				'0': '',
-				'1': {feminine: 'одна', masculine: 'один'},
-				'2': {feminine: 'две', masculine: 'два'},
-				'3': 'три',
-				'4': 'четыре',
-				'5': 'пять',
-				'6': 'шесть',
-				'7': 'семь',
-				'8': 'восемь',
-				'9': 'девять',
-				'10': 'десять',
-				'11': 'одиннадцать',
-				'12': 'двенадцать',
-				'13': 'тринадцать',
-				'14': 'четырнадцать',
-				'15': 'пятнадцать',
-				'16': 'шестанадцать',
-				'17': 'семнадцать',
-				'18': 'восемнадцать',
-				'19': 'девятнадцать',
-				tens: [
-					'', '', 'двадцать', 'тридцать', 'сорок', 'пятьдесят',
-					'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто'
-				],
-				hundreds: [
-					'', 'сто', 'двести', 'триста', 'четыреста', 'пятьсот',
-					'шестьсот', 'семьсот', 'восемьсот', 'девятьсот'
-				],
-				tenInPower: {
-					'3': {pluralForms: ['тысяча', 'тысячи', 'тысяч']},
-					'6': {pluralForms: ['миллион', 'миллиона', 'миллионов']},
-					'9': {pluralForms: ['миллиард', 'миллиарда', 'миллиардов']},
-					'12': {pluralForms: ['триллион', 'триллиона', 'триллионов']}
-				}
-			}
-		},
-		defaultLocale: 'ru',
-		parse: parse
-	};
 
-	var fortyTwo = function(params) {
-		_ft.defaultLocale = params.defaultLocale || _ft.defaultLocale;
+	var fortyTwo = {
+		_locales: {},
+		_defaultLocale: ''
 	};
 
 	fortyTwo.addLocale = addLocale;
@@ -57,18 +16,18 @@
 	fortyTwo.setDefaultLocale = setDefaultLocale;
 
 	function addLocale(localeName, locale) {
-		_ft.locales[localeName] = locale;
+		fortyTwo._locales[localeName] = locale;
 	}
 
 	function setDefaultLocale(localeName) {
-		_ft.defaultLocale = localeName;
+		fortyTwo._defaultLocale = localeName;
 	}
 
 	function wordify(number, locale) {
 		var parts = [];
 		var resultParts = [];
 
-		locale = _ft.locales[locale || _ft.defaultLocale];
+		locale = fortyTwo._locales[locale || fortyTwo._defaultLocale];
 
 		if (!_isNumeric(number)) {
 			throw new Error('`number` is not a number');
@@ -78,7 +37,7 @@
 		var parsedNumber = parseInt(number, 10);
 		if (number !== parsedNumber) {
 			if (typeof number !== 'string') {
-				console.warn('FortyTwo.wordify: got float number, ' +
+				console.warn('fortyTwo.wordify: got float number, ' +
 							' will parse only integer part'
 				);
 			}
@@ -96,27 +55,31 @@
 			parts.push(parsedNumber.slice(start, end));
 		}
 
+		var parseFunction = locale.parse || defaultParse;
 		//Parse parts in reverse order
 		for (var rank = partsLength - 1; rank >= 0; rank--) {
 			var tempPart = parseInt(parts[rank], 10);
 			if (tempPart) {
-				_ft.parse(resultParts, tempPart, rank * 3, locale);
+				parseFunction(resultParts, tempPart, rank * 3, locale);
 			}
 		}
 
-		var result = resultParts.join('').replace(/\s+$/, '');
+		//join and trim result
+		var result = resultParts
+			.join('')
+			.replace(/\s+$/, '');
 
 		return result;
 	}
 
-	function parse(resultParts, currentNumber, tenInPower, locale) {
+	function defaultParse(resultParts, currentNumber, currentPosition, locale) {
 		var numberString = currentNumber.toString();
 
 		if (numberString.length === 3) {
 			numberString = locale.parseHundreds(
 				resultParts,
 				numberString,
-				tenInPower
+				currentPosition
 			);
 		}
 
@@ -124,7 +87,7 @@
 			numberString = locale.parseTens(
 				resultParts,
 				numberString,
-				tenInPower
+				currentPosition
 			);
 		}
 
@@ -133,15 +96,15 @@
 			numberString = locale.parseOnesAndTeens(
 				resultParts,
 				numberString,
-				tenInPower
+				currentPosition
 			);
 		}
 
-		if (tenInPower >= 3) {
-			numberString = locale.parseTensInPower(
+		if (currentPosition >= 3) {
+			numberString = locale.parsePowerOfTen(
 				resultParts,
 				numberString,
-				tenInPower
+				currentPosition
 			);
 		}
 	}

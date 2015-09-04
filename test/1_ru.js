@@ -6,7 +6,7 @@ var fortyTwo = require('../dist/forty-two');
 var ruLocale = require('../locales/ru');
 
 
-describe('forty-five', function() {
+describe('forty-two', function() {
 
 	before(function() {
 		fortyTwo.addLocale('ru', ruLocale);

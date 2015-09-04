@@ -31,7 +31,7 @@
 			'', 'сто', 'двести', 'триста', 'четыреста', 'пятьсот',
 			'шестьсот', 'семьсот', 'восемьсот', 'девятьсот'
 		],
-		tensInPower: {
+		powerOfTen: {
 			'3': {pluralForms: ['тысяча', 'тысячи', 'тысяч']},
 			'6': {pluralForms: ['миллион', 'миллиона', 'миллионов']},
 			'9': {pluralForms: ['миллиард', 'миллиарда', 'миллиардов']},
@@ -40,43 +40,45 @@
 		parseOnesAndTeens: parseOnesAndTeens,
 		parseTens: parseTens,
 		parseHundreds: parseHundreds,
-		parseTensInPower: parseTensInPower
+		parsePowerOfTen: parsePowerOfTen
 	};
 
-	function parseOnesAndTeens(resultParts, numberString, tenInPower) {
-		var gender = tenInPower === 3
+	var DELIMITER = ' ';
+
+	function parseOnesAndTeens(resultParts, numberString, currentPosition) {
+		var gender = currentPosition === 3
 			? 'feminine'
 			: 'masculine';
 
 		resultParts.push(
-			(locale[numberString][gender] || locale[numberString]) + ' '
+			(locale[numberString][gender] || locale[numberString]) + DELIMITER
 		);
 
 		return numberString;
 	}
 
-	function parseTens(resultParts, numberString, tenInPower) {
-		resultParts.push(locale.tens[numberString[0]] + ' ');
+	function parseTens(resultParts, numberString, currentPosition) {
+		resultParts.push(locale.tens[numberString[0]] + DELIMITER);
 
 		return numberString[1];
 	}
 
-	function parseHundreds(resultParts, numberString, tenInPower) {
-		resultParts.push(locale.hundreds[numberString[0]] + ' ');
+	function parseHundreds(resultParts, numberString, currentPosition) {
+		resultParts.push(locale.hundreds[numberString[0]] + DELIMITER);
 
 		return numberString.slice(1, 3);
 	}
 
-	function parseTensInPower(resultParts, numberString, tenInPower) {
-		var pluralForm = _plural(
+	function parsePowerOfTen(resultParts, numberString, currentPosition) {
+		var pluralForm = _pluralize(
 			numberString,
-			locale.tensInPower[tenInPower].pluralForms
+			locale.powerOfTen[currentPosition].pluralForms
 		);
 
-		resultParts.push(pluralForm + ' ');
+		resultParts.push(pluralForm + DELIMITER);
 	}
 
-	function _plural(number, wordForms) {
+	function _pluralize(number, wordForms) {
 		number = parseInt(number, 10);
 
 		if (number === 1) {

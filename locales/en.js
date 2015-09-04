@@ -27,7 +27,7 @@
 			'', '', 'twenty', 'thirty', 'forty', 'fifty',
 			'sixty', 'seventy', 'eighty', 'ninety'
 		],
-		'tensInPower': {
+		'powerOfTen': {
 			'3': 'thousand',
 			'6': 'million',
 			'9': 'billion',
@@ -36,22 +36,24 @@
 		parseOnesAndTeens: parseOnesAndTeens,
 		parseTens: parseTens,
 		parseHundreds: parseHundreds,
-		parseTensInPower: parseTensInPower
+		parsePowerOfTen: parsePowerOfTen
 	};
 
-	function parseOnesAndTeens(resultParts, numberString, tenInPower) {
-		resultParts.push(locale[numberString] + ' ');
+	var DELIMITER = ' ';
+
+	function parseOnesAndTeens(resultParts, numberString, powerOfTen) {
+		resultParts.push(locale[numberString] + DELIMITER);
 
 		return numberString;
 	}
 
-	function parseTens(resultParts, numberString, tenInPower) {
+	function parseTens(resultParts, numberString, powerOfTen) {
 		var value = locale.tens[numberString[0]];
 
 		value = value + (
 			numberString[1] !== '0'
 				? '-'
-				: ' '
+				: DELIMITER
 		);
 
 		resultParts.push(value);
@@ -59,7 +61,7 @@
 		return numberString[1];
 	}
 
-	function parseHundreds(resultParts, numberString, tenInPower) {
+	function parseHundreds(resultParts, numberString, powerOfTen) {
 		var value = locale[numberString[0]] + ' hundred ';
 
 		resultParts.push(value);
@@ -67,9 +69,9 @@
 		return numberString.slice(1, 3);
 	}
 
-	function parseTensInPower(resultParts, numberString, tenInPower) {
+	function parsePowerOfTen(resultParts, numberString, powerOfTen) {
 		resultParts.push(
-			locale.tensInPower[tenInPower] + ' '
+			locale.powerOfTen[powerOfTen] + DELIMITER
 		);
 	}
 
