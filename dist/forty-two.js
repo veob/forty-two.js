@@ -24,14 +24,21 @@
 	fortyTwo.addLocale = addLocale;
 	fortyTwo.wordify = wordify;
 	fortyTwo.setDefaultLocale = setDefaultLocale;
+	fortyTwo.loadLocale = loadLocale;
 
 	function addLocale(localeName, locale) {
 		fortyTwo._locales[localeName] = locale;
 	}
 
+	function loadLocale(localeName) {
+		if (!fortyTwo._locales[localeName]) {
+			require('./locales/' + localeName);
+		}
+	}
+
 	function setDefaultLocale(localeName) {
 		if (!fortyTwo._locales[localeName]) {
-			throw new Error('Locale ' + localeName + ' is not loaded');
+			throw new Error('Locale ' + localeName + ' is not found');
 		}
 		fortyTwo._defaultLocale = localeName;
 	}
