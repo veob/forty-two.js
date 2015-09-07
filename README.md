@@ -1,2 +1,5 @@
 # forty-two.js
-Want to stringify your number? We got some
+Want to wordify/spell out/write your number? We got some
+
+##docs
+to be continued...

@@ -3,14 +3,13 @@
 
 var expect = require('expect.js');
 var fortyTwo = require('../dist/forty-two');
-var ruLocale = require('../locales/ru');
+var ruLocale = require('../dist/locales/ru');
 
 
 describe('forty-two', function() {
 
 	before(function() {
-		fortyTwo.addLocale('ru', ruLocale);
-		fortyTwo.setDefaultLocale('ru');
+		fortyTwo.setDefaultLocale(ruLocale);
 	});
 
 	it('tests good numbers', function() {

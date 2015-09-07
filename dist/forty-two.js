@@ -1,11 +1,21 @@
 'use strict';
-/*eslint-env node*/
+/*eslint no-undef:0*/
 
-(function() {
-	var root = this;
+(function(global, factory) {
+	if (typeof define === 'function' && define.amd) {
+		//AMD
+		return define([], factory);
+	}
 
-	//internal fortyTwo object
+	if (typeof module === 'object' && module.exports) {
+		//node
+		return module.exports = factory();
+	}
 
+	//browser
+	global.fortyTwo = factory();
+
+}(this, function () {
 	var fortyTwo = {
 		_locales: {},
 		_defaultLocale: ''
@@ -20,6 +30,9 @@
 	}
 
 	function setDefaultLocale(localeName) {
+		if (!fortyTwo._locales[localeName]) {
+			throw new Error('Locale ' + localeName + ' is not loaded');
+		}
 		fortyTwo._defaultLocale = localeName;
 	}
 
@@ -150,6 +163,7 @@
 			parseHundreds: parseHundreds,
 			parsePowerOfTen: parsePowerOfTen
 		};
+
 		var DELIMITER = ' ';
 
 		function parseOnesAndTeens(resultParts, numberString, powerOfTen) {
@@ -190,14 +204,5 @@
 	fortyTwo.addLocale('en', enLocale);
 	fortyTwo.setDefaultLocale('en');
 
-	if (typeof exports !== 'undefined' ) {
-		if (typeof module !== 'undefined' && module.exports ) {
-			exports = module.exports = fortyTwo;
-		}
-		module.exports = fortyTwo;
-	}
-	else {
-		root.fortyTwo = fortyTwo;
-	}
-
-}.call(this));
+	return fortyTwo;
+}));

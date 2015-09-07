@@ -1,7 +1,19 @@
 'use strict';
-/*eslint-env node*/
+/*eslint no-undef:0*/
 
-(function() {
+(function (global, factory) {
+	if (typeof define === 'function' && define.amd) {
+		//AMD
+		return define(['fortyTwo'], factory);
+	}
+
+	if (typeof module === 'object' && module.exports) {
+		return module.exports = factory(require('../forty-two'));
+	}
+
+	factory(global.fortyTwo);
+}(this, function(fortyTwo) {
+
 	var locale = {
 		'0': '',
 		'1': {feminine: 'одна', masculine: 'один'},
@@ -92,14 +104,7 @@
 		return wordForms[2];
 	}
 
-	if (typeof module !== 'undefined') {
-		module.exports = locale;
-	}
+	fortyTwo.addLocale('ru', locale);
 
-	if (typeof window !== 'undefined' &&
-		this.fortyTwo &&
-		this.fortyTwo.addLocale
-	) {
-		this.fortyTwo.addLocale('ru', locale);
-	}
-}).call(this);
+	return 'ru';
+}));
