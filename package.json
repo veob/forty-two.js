@@ -1,6 +1,6 @@
 {
   "name": "forty-two.js",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Wordify (spell out) number",
   "main": "dist/forty-two.js",
   "directories": {
