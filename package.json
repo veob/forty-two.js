@@ -1,5 +1,5 @@
 {
-  "name": "forty-two.js",
+  "name": "forty-two",
   "version": "0.0.1",
   "description": "Wordify (spell out) number",
   "main": "dist/forty-two.js",
